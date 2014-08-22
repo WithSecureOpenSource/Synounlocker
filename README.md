@@ -5,6 +5,8 @@ synounlocker.py is a tool for decrypting files encrypted by the SynoLocker famil
 
 The tool works by first looking in a file for the magic string "THE_REAL_PWNED_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_1337" that is used by SynoLocker to identify files it has encrypted. Next, it will attempt to decrypt the file. During this process, it will also attempt to check that the encrypted file has not been corrupted. This is possible, because SynoLocker stores a [HMAC](http://en.wikipedia.org/wiki/Hash-based_message_authentication_code) of the encrypted data as part of the file. If all seems to have gone well, the tool will write the decrypted contents to a new file, with the name of the original file appended with ".dec". The tool will not remove or overwrite the original encrypted file.
 
+[More information here.](http://www.f-secure.com/weblog/archives/00002737.html)
+
 IMPORTANT
 =========
 
