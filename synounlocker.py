@@ -40,7 +40,7 @@ def decrypt(enc_file_path, priv_key_file_path):
     try:
         # size <= encrypted key + magic string + IV + HMAC
         if os.path.getsize(enc_file_path) <= 256 + 60 + 16 + 32:
-            print "Error: file too small to be encrypted by SynoLocker!"
+            print "Error: file %s too small to be encrypted by SynoLocker!" % enc_file_path
             return
     except os.error:
         print "Error: unable to access encrypted file!"
@@ -49,7 +49,7 @@ def decrypt(enc_file_path, priv_key_file_path):
     try:
         with open(enc_file_path, 'rb') as enc_file:
             if not checkHeader(enc_file):
-                print "Error: file not recognized as encrypted by SynoLocker!"
+                print "Error: file %s not recognized as encrypted by SynoLocker!" % enc_file_path
                 return
 
             try:
@@ -101,23 +101,33 @@ def decrypt(enc_file_path, priv_key_file_path):
 
             # Write decrypted data to <encrypted file name>.dec
             try:
-                with open(enc_file_path + ".dec", 'wb') as ofile:
+                with open(enc_file_path, 'wb') as ofile:
                     ofile.write(decrypted)
             except:
                 "Error: unable to write decrypted file to disk!"
                 return
 
-            print "Successfully decrypted file!"
+            print "Successfully decrypted %s !" % enc_file_path
             return
 
     except:
-        print "Error: unable to decrypt file!"
+        print "Error: unable to decrypt %s !" % enc_file_path
         return
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
-        decrypt(sys.argv[1], sys.argv[2])
+        root = sys.argv[1]
+        if os.path.isdir(root):
+                path = os.path.join(root, "")
+                for path, subdirs, files in os.walk(root):
+                    for name in files:
+                        cryptofile = os.path.join(path, name)
+                        decrypt(cryptofile, sys.argv[2])
+        else:
+                decrypt(sys.argv[1], sys.argv[2])
     else:
-        print "Usage: %s <path to encrypted file> <path to private key>" % sys.argv[0]
+        print "Usage: %s <path to folder with encrypted files or path the encrypted file> <path to private key>" % sys.argv[0]
         print ""
-        print "         decrypted file will be written to <encrypted file name>.dec"
+        print "         each encrypted file will be overwritten with the decrypted file"
+        print "         files that are not encrypted will remain untouched"
+
